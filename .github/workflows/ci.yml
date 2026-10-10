@@ -1,0 +1,28 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  sanity:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Sanity check
+        shell: bash
+        run: |
+          set -euxo pipefail
+          count=$(git ls-files | wc -l | tr -d ' ')
+          echo "Tracked files: ${count}"
+          echo "CI sanity check passed."
